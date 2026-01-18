@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f1115" />
+    <meta name="description" content="Мобильный PWA калькулятор-сумматор с лентой" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <title>LabelCalc</title>
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header">
+        <div class="app__title">
+          <h1>LabelCalc</h1>
+          <p>Калькулятор-сумматор с лентой</p>
+        </div>
+        <div class="app__total" aria-live="polite">
+          <span class="app__total-label">Итого</span>
+          <span class="app__total-value" id="totalValue">0</span>
+        </div>
+        <div class="app__actions">
+          <button class="btn btn--ghost" type="button" id="historyBtn">История</button>
+          <button class="btn btn--primary" type="button" id="saveBtn">Сохранить</button>
+          <button class="btn btn--ghost" type="button" id="copyBtn">Копировать</button>
+        </div>
+      </header>
+
+      <main class="app__main">
+        <section class="tape" aria-label="Лента операций">
+          <div class="tape__empty">
+            Лента пуста. Добавьте первую строку.
+          </div>
+          <ul class="tape__list" id="tapeList"></ul>
+        </section>
+
+        <section class="input-panel" aria-label="Ввод строки">
+          <div class="input-panel__row">
+            <span class="input-panel__label">Текущее значение</span>
+            <div class="input-panel__display" id="currentInput">0</div>
+          </div>
+        </section>
+
+        <section class="keyboard" aria-label="Клавиатура">
+          <div class="keyboard__grid">
+            <button class="key" type="button" data-key="7">7</button>
+            <button class="key" type="button" data-key="8">8</button>
+            <button class="key" type="button" data-key="9">9</button>
+            <button class="key key--action" type="button" data-action="backspace">←</button>
+
+            <button class="key" type="button" data-key="4">4</button>
+            <button class="key" type="button" data-key="5">5</button>
+            <button class="key" type="button" data-key="6">6</button>
+            <button class="key key--action" type="button" data-action="clear">C</button>
+
+            <button class="key" type="button" data-key="1">1</button>
+            <button class="key" type="button" data-key="2">2</button>
+            <button class="key" type="button" data-key="3">3</button>
+            <button class="key key--accent" type="button" data-action="add">+</button>
+
+            <button class="key key--wide" type="button" data-key="0">0</button>
+            <button class="key" type="button" data-key=",">,</button>
+            <button class="key key--accent" type="button" data-action="subtract">-</button>
+            <button class="key key--primary" type="button" data-action="equals">=</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal" id="lineModal" aria-hidden="true">
+      <div class="modal__backdrop" data-close="modal"></div>
+      <div class="modal__content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <h2 id="modalTitle">Строка</h2>
+        <p>Добавьте подпись или отредактируйте значение</p>
+        <input class="modal__input" id="modalValue" type="text" inputmode="decimal" placeholder="0" />
+        <input class="modal__input" id="modalLabel" type="text" placeholder="Например: доставка" />
+        <div class="modal__actions">
+          <button class="btn btn--primary" type="button" id="modalSave">Сохранить</button>
+          <button class="btn btn--ghost" type="button" id="modalSkip">Пропустить</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./assets/js/app.js" defer></script>
+  </body>
+</html>

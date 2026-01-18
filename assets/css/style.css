@@ -1,0 +1,342 @@
+:root {
+  color-scheme: light dark;
+  --bg: #0f1115;
+  --surface: #151922;
+  --surface-2: #1c2230;
+  --text: #f5f6fa;
+  --muted: #98a1b2;
+  --accent: #5b8dff;
+  --accent-2: #2d6bff;
+  --border: #2a3140;
+  --danger: #ff6b6b;
+  --shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  --radius: 16px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --font: "-apple-system", "Segoe UI", "Roboto", "Inter", sans-serif;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f8;
+  --text: #101525;
+  --muted: #5a6475;
+  --accent: #2d6bff;
+  --accent-2: #1c4de0;
+  --border: #d6dbe6;
+  --shadow: 0 12px 30px rgba(16, 24, 40, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  padding: calc(16px + var(--safe-top)) 16px calc(16px + var(--safe-bottom));
+}
+
+.app {
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.app__header {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 16px;
+}
+
+.app__title h1 {
+  font-size: 1.5rem;
+}
+
+.app__title p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+.app__total {
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.app__total-value {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.app__total-label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.app__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.app__main {
+  flex: 1;
+  display: grid;
+  gap: 16px;
+}
+
+.tape {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  min-height: 220px;
+  box-shadow: var(--shadow);
+}
+
+.tape__empty {
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 24px 12px;
+}
+
+.tape__list {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.tape__item {
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tape__content {
+  display: grid;
+  gap: 4px;
+}
+
+.tape__value {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.tape__label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.tape__delete {
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  min-height: 48px;
+  min-width: 48px;
+  cursor: pointer;
+}
+
+.keyboard {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px 16px calc(16px + var(--safe-bottom));
+  min-height: 160px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+}
+
+.keyboard__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  grid-auto-rows: minmax(52px, auto);
+}
+
+.key {
+  min-height: 52px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.key:active {
+  transform: scale(0.98);
+}
+
+.key--primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  border: none;
+  box-shadow: 0 10px 24px rgba(45, 107, 255, 0.4);
+  min-height: 64px;
+  font-size: 1.4rem;
+}
+
+.key--accent {
+  background: rgba(91, 141, 255, 0.16);
+  border: 1px solid rgba(91, 141, 255, 0.4);
+}
+
+.key--action {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.key--wide {
+  grid-column: span 2;
+}
+
+.input-panel {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+}
+
+.input-panel__row {
+  display: grid;
+  gap: 6px;
+}
+
+.input-panel__label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.input-panel__display {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: right;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.modal__input {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 1rem;
+  width: 100%;
+}
+
+.modal__input:focus {
+  outline: 2px solid var(--accent);
+  border-color: transparent;
+}
+
+.btn {
+  border: none;
+  border-radius: 14px;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(45, 107, 255, 0.4);
+}
+
+.btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal[aria-hidden="false"] {
+  display: flex;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal__content {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  width: min(320px, 100%);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+  z-index: 1;
+}
+
+.modal__content p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.modal__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .app__actions {
+    grid-template-columns: 1fr;
+  }
+}
