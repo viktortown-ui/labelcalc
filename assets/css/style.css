@@ -104,8 +104,6 @@ body {
 
 .app__main {
   flex: 1;
-  display: grid;
-  gap: 16px;
 }
 
 .tape {
@@ -129,95 +127,6 @@ body {
   gap: 12px;
 }
 
-.tape__item {
-  background: var(--surface-2);
-  border-radius: 12px;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.tape__content {
-  display: grid;
-  gap: 4px;
-}
-
-.tape__value {
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.tape__label {
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.tape__delete {
-  border: none;
-  background: transparent;
-  font-size: 1.2rem;
-  min-height: 48px;
-  min-width: 48px;
-  cursor: pointer;
-}
-
-.keyboard {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 16px 16px calc(16px + var(--safe-bottom));
-  min-height: 160px;
-  box-shadow: var(--shadow);
-  display: grid;
-  gap: 12px;
-}
-
-.keyboard__grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  grid-auto-rows: minmax(52px, auto);
-}
-
-.key {
-  min-height: 52px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
-  font-size: 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
-}
-
-.key:active {
-  transform: scale(0.98);
-}
-
-.key--primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #fff;
-  border: none;
-  box-shadow: 0 10px 24px rgba(45, 107, 255, 0.4);
-  min-height: 64px;
-  font-size: 1.4rem;
-}
-
-.key--accent {
-  background: rgba(91, 141, 255, 0.16);
-  border: 1px solid rgba(91, 141, 255, 0.4);
-}
-
-.key--action {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.key--wide {
-  grid-column: span 2;
-}
-
 .input-panel {
   background: var(--surface);
   border-radius: var(--radius);
@@ -237,20 +146,7 @@ body {
   color: var(--muted);
 }
 
-.input-panel__display {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-align: right;
-  min-height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
+.input-panel__input,
 .modal__input {
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -261,9 +157,16 @@ body {
   width: 100%;
 }
 
+.input-panel__input:focus,
 .modal__input:focus {
   outline: 2px solid var(--accent);
   border-color: transparent;
+}
+
+.input-panel__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .btn {

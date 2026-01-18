@@ -1,4 +1,4 @@
-const CACHE_NAME = "labelcalc-v4";
+const CACHE_NAME = "labelcalc-v1";
 const ASSETS = [
   "./",
   "./index.html",

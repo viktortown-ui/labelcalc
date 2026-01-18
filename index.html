@@ -34,50 +34,46 @@
           </div>
           <ul class="tape__list" id="tapeList"></ul>
         </section>
-
-        <section class="input-panel" aria-label="Ввод строки">
-          <div class="input-panel__row">
-            <span class="input-panel__label">Текущее значение</span>
-            <div class="input-panel__display" id="currentInput">0</div>
-          </div>
-        </section>
-
-        <section class="keyboard" aria-label="Клавиатура">
-          <div class="keyboard__grid">
-            <button class="key" type="button" data-key="7">7</button>
-            <button class="key" type="button" data-key="8">8</button>
-            <button class="key" type="button" data-key="9">9</button>
-            <button class="key key--action" type="button" data-action="backspace">←</button>
-
-            <button class="key" type="button" data-key="4">4</button>
-            <button class="key" type="button" data-key="5">5</button>
-            <button class="key" type="button" data-key="6">6</button>
-            <button class="key key--action" type="button" data-action="clear">C</button>
-
-            <button class="key" type="button" data-key="1">1</button>
-            <button class="key" type="button" data-key="2">2</button>
-            <button class="key" type="button" data-key="3">3</button>
-            <button class="key key--accent" type="button" data-action="add">+</button>
-
-            <button class="key key--wide" type="button" data-key="0">0</button>
-            <button class="key" type="button" data-key=",">,</button>
-            <button class="key key--accent" type="button" data-action="subtract">-</button>
-            <button class="key key--primary" type="button" data-action="equals">=</button>
-          </div>
-        </section>
       </main>
+
+      <section class="input-panel" aria-label="Ввод строки">
+        <div class="input-panel__row">
+          <label class="input-panel__label" for="valueInput">Число</label>
+          <input
+            id="valueInput"
+            class="input-panel__input"
+            type="number"
+            inputmode="decimal"
+            placeholder="0"
+            autocomplete="off"
+          />
+        </div>
+        <div class="input-panel__row">
+          <label class="input-panel__label" for="labelInput">Подпись</label>
+          <input
+            id="labelInput"
+            class="input-panel__input"
+            type="text"
+            placeholder="Опциональная подпись"
+            autocomplete="off"
+          />
+        </div>
+        <div class="input-panel__actions">
+          <button class="btn btn--primary" type="button" id="addBtn">Добавить</button>
+          <button class="btn btn--ghost" type="button" id="clearBtn">Очистить</button>
+        </div>
+      </section>
     </div>
 
-    <div class="modal" id="lineModal" aria-hidden="true">
+    <div class="modal" id="labelModal" aria-hidden="true">
       <div class="modal__backdrop" data-close="modal"></div>
       <div class="modal__content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <h2 id="modalTitle">Строка</h2>
-        <p>Добавьте подпись или отредактируйте значение</p>
-        <input class="modal__input" id="modalValue" type="text" inputmode="decimal" placeholder="0" />
-        <input class="modal__input" id="modalLabel" type="text" placeholder="Например: доставка" />
+        <h2 id="modalTitle">Подпись</h2>
+        <p>Добавьте подпись для строки</p>
+        <input class="modal__input" type="text" placeholder="Например: доставка" />
         <div class="modal__actions">
-          <button class="btn btn--primary" type="button" id="modalSave">Сохранить</button>
-          <button class="btn btn--ghost" type="button" id="modalSkip">Пропустить</button>
+          <button class="btn btn--primary" type="button">Сохранить</button>
+          <button class="btn btn--ghost" type="button" data-close="modal">Отмена</button>
         </div>
       </div>
     </div>
