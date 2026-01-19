@@ -9,21 +9,17 @@
     <link rel="stylesheet" href="./assets/css/style.css" />
     <title>LabelCalc</title>
   </head>
-  <body>
+  <body class="mode-calc">
     <div class="app">
       <header class="app__header">
-        <div class="app__title">
-          <h1>LabelCalc</h1>
-          <p>Калькулятор-сумматор с лентой</p>
-        </div>
         <div class="app__total" aria-live="polite">
           <span class="app__total-label">Итого</span>
-          <span class="app__total-value" id="totalValue">0</span>
-        </div>
-        <div class="app__actions">
-          <button class="btn btn--ghost" type="button" id="historyBtn">История</button>
-          <button class="btn btn--primary" type="button" id="saveBtn">Сохранить</button>
-          <button class="btn btn--ghost" type="button" id="copyBtn">Копировать</button>
+          <div class="app__total-right">
+            <span class="app__total-value" id="totalValue">0</span>
+            <button class="icon-btn" type="button" id="copyBtn" title="Копировать ленту">
+              ⧉
+            </button>
+          </div>
         </div>
       </header>
 
@@ -36,16 +32,7 @@
         </section>
       </main>
 
-      <section class="input-panel" id="calcPanel" aria-label="Ввод строки">
-        <div class="input-panel__header">
-          <div class="input-panel__title">Калькулятор</div>
-          <div class="input-panel__header-actions">
-            <button class="btn btn--ghost" type="button" id="viewToggle" aria-pressed="false">Лента</button>
-            <button class="btn btn--ghost input-panel__toggle" type="button" id="calcToggle" aria-expanded="true">
-              Свернуть
-            </button>
-          </div>
-        </div>
+      <section class="input-panel" id="calcPanel" aria-label="Калькулятор">
 
         <div class="display" aria-label="Текущее выражение">
           <div class="display__label">Выражение</div>
@@ -96,6 +83,11 @@
           <button class="btn btn--ghost" type="button" id="clearBtn">Сброс</button>
         </div>
       </section>
+
+      <nav class="bottom-nav" aria-label="Переключение экранов">
+        <button class="bottom-nav__btn" type="button" id="modeCalcBtn" aria-pressed="true">Калькулятор</button>
+        <button class="bottom-nav__btn" type="button" id="modeTapeBtn" aria-pressed="false">Лента</button>
+      </nav>
     </div>
 
     <div class="modal" id="labelModal" aria-hidden="true">

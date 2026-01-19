@@ -62,41 +62,24 @@ body {
   width: min(520px, 100%);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   height: 100%;
 }
 
-/* Режимы экрана: чтобы клавиатура была целиком, а скроллилась только лента */
-body.view-calc .app__main { display: none; }
-body.view-calc .app { gap: 12px; }
-
-/* В режиме калькулятора делаем шапку компактнее (чтобы не съедала высоту) */
-body.view-calc .app__title,
-body.view-calc .app__actions { display: none; }
-body.view-calc .app__header { padding: 12px; gap: 10px; }
-body.view-calc .app__total-value { font-size: 1.6rem; }
-
-/* В режиме ленты калькулятор сворачивается в полоску, лента на весь экран */
-body.view-tape #calcPanel { max-height: calc(var(--calc-panel-h-collapsed) + var(--safe-bottom)); overflow: hidden; }
-body.view-tape .app__main { padding-bottom: calc(var(--calc-panel-h-collapsed) + 24px + var(--safe-bottom)); }
+/* Два режима экрана:
+   - mode-calc: калькулятор на весь экран (лента скрыта)
+   - mode-tape: лента на весь экран (калькулятор скрыт)
+*/
+body.mode-calc .app__main { display: none; }
+body.mode-tape #calcPanel { display: none; }
 
 .app__header {
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 12px;
   box-shadow: var(--shadow);
   display: grid;
-  gap: 16px;
-}
-
-.app__title h1 {
-  font-size: 1.5rem;
-}
-
-.app__title p {
-  color: var(--muted);
-  font-size: 0.95rem;
-  margin-top: 4px;
+  gap: 10px;
 }
 
 .app__total {
@@ -107,6 +90,12 @@ body.view-tape .app__main { padding-bottom: calc(var(--calc-panel-h-collapsed) +
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
+}
+
+.app__total-right{
+  display:flex;
+  align-items:center;
+  gap: 10px;
 }
 
 .app__total-value {
@@ -169,7 +158,7 @@ body.view-tape .app__main { padding-bottom: calc(var(--calc-panel-h-collapsed) +
 }
 
 .tape-item__value {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.2px;
 }
@@ -220,34 +209,9 @@ body.view-tape .app__main { padding-bottom: calc(var(--calc-panel-h-collapsed) +
   gap: 12px;
 }
 
-/* --- Bottom calculator panel (fixed + collapsible) --- */
+/* --- Bottom navigation --- */
 :root{
-  /* примерная высота панели (для отступа ленты). можно подстроить */
-  --calc-panel-h: 360px;
-  --calc-panel-h-collapsed: 56px;
-}
-
-.input-panel__header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom: 4px;
-}
-
-.input-panel__header-actions{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-
-.input-panel__title{
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-
-.input-panel__toggle{
-  min-height: 44px;
+  --nav-h: 64px;
 }
 
 /* Делаем панель "калькулятором" как в телефоне */
@@ -255,30 +219,20 @@ body.view-tape .app__main { padding-bottom: calc(var(--calc-panel-h-collapsed) +
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 0;
+  bottom: calc(var(--nav-h) + var(--safe-bottom));
   width: min(520px, 100%);
   z-index: 50;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  padding-bottom: calc(16px + var(--safe-bottom));
+  padding-bottom: 12px;
   /* В обычном режиме клавиатура должна влезать без внутреннего скролла */
-  max-height: calc(100dvh - 8px);
+  max-height: calc(100dvh - var(--nav-h) - 8px);
   overflow: hidden;
 }
 
-/* Чтобы лента не перекрывалась панелью */
+/* Чтобы лента не перекрывалась нижней навигацией */
 .app__main{
-  padding-bottom: calc(var(--calc-panel-h) + 24px + var(--safe-bottom));
-}
-
-/* Свернутый режим */
-#calcPanel.is-collapsed{
-  max-height: calc(var(--calc-panel-h-collapsed) + var(--safe-bottom));
-  overflow: hidden;
-}
-
-body.calc-collapsed .app__main{
-  padding-bottom: calc(var(--calc-panel-h-collapsed) + 24px + var(--safe-bottom));
+  padding-bottom: calc(var(--nav-h) + 24px + var(--safe-bottom));
 }
 
 .display {
@@ -430,6 +384,43 @@ body.calc-collapsed .app__main{
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text);
+}
+
+/* Bottom nav */
+.bottom-nav{
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: min(520px, 100%);
+  z-index: 60;
+  padding: 10px 12px calc(10px + var(--safe-bottom));
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  background: rgba(15, 17, 21, 0.55);
+  backdrop-filter: blur(10px);
+}
+
+.bottom-nav__btn{
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 14px;
+  min-height: 44px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.bottom-nav__btn:active{ transform: scale(0.98); }
+
+.bottom-nav__btn.is-active{
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border: none;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(45, 107, 255, 0.35);
 }
 
 .modal {
