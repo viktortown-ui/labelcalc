@@ -240,8 +240,18 @@ body.mode-tape #calcPanel { display: none; }
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 12px 14px;
+  position: relative;
   display: grid;
   gap: 6px;
+}
+
+.display__close{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 12px;
 }
 
 .display__label {
@@ -430,10 +440,17 @@ body.mode-tape #calcPanel { display: none; }
   align-items: center;
   justify-content: center;
   padding: 16px;
+  z-index: 200;
 }
 
 .modal[aria-hidden="false"] {
   display: flex;
+}
+
+/* Когда открыта модалка — не даём фикс-панелям перекрывать ввод */
+body.modal-open #calcPanel,
+body.modal-open .bottom-nav{
+  display: none;
 }
 
 .modal__backdrop {
@@ -452,6 +469,14 @@ body.mode-tape #calcPanel { display: none; }
   display: grid;
   gap: 12px;
   z-index: 1;
+  max-height: calc(100dvh - 32px - var(--safe-top) - var(--safe-bottom));
+  overflow: auto;
+}
+
+/* Когда открыта модалка — убираем фиксированные панели, чтобы клавиатура не перекрывала ввод */
+body.modal-open #calcPanel,
+body.modal-open .bottom-nav{
+  display: none;
 }
 
 .modal__content p {

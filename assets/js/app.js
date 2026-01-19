@@ -290,6 +290,8 @@ const ui = {
   modalLabelInput: null,
   modalSaveBtn: null,
   modalSkipBtn: null,
+  closeCalcBtn: null,
+  applyMode: null,
 
   init() {
     this.totalValue = document.getElementById("totalValue");
@@ -312,9 +314,15 @@ const ui = {
     this.modalLabelInput = document.getElementById("modalLabelInput");
     this.modalSaveBtn = document.getElementById("modalSaveBtn");
     this.modalSkipBtn = document.getElementById("modalSkipBtn");
+    this.closeCalcBtn = document.getElementById("closeCalcBtn");
 
     // режимы экрана: "Калькулятор" / "Лента"
     this.initModeSwitcher();
+
+    // быстрый крестик: скрыть калькулятор и уйти в ленту
+    this.closeCalcBtn?.addEventListener("click", () => {
+      this.applyMode?.("tape");
+    });
 
     // keypad
     this.keypad.addEventListener("click", (e) => {
@@ -365,6 +373,9 @@ const ui = {
 
       try { localStorage.setItem(key, isCalc ? "calc" : "tape"); } catch {}
     };
+
+    // чтобы другие обработчики (например, крестик/автопереход) могли переключать режим
+    this.applyMode = apply;
 
     apply(start);
 
@@ -540,6 +551,13 @@ function onReset() {
 }
 
 function onAddToTape() {
+  // если уже открыта модалка подписи — не даём "добавлять" второй раз
+  if (state.pendingLabelForExpr) {
+    // просто возвращаем фокус в поле модалки
+    ui.modalLabelInput?.focus?.();
+    return;
+  }
+
   const expr = state.expr.trim();
   if (!expr) {
     flashHint("Введите выражение");
@@ -559,6 +577,8 @@ function onAddToTape() {
     addEntry(expr, value, labelText);
     ui.labelInput.value = "";
     setExpr("");
+    // после добавления — сразу показываем ленту (как ожидается на мобиле)
+    ui.applyMode?.("tape");
     return;
   }
 
@@ -616,12 +636,19 @@ function openModal(expr, value) {
   state.pendingLabelForExpr = { expr, value };
   ui.modalLabelInput.value = "";
   ui.modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  // блокируем кнопки, чтобы не словить дубли
+  if (ui.addBtn) ui.addBtn.disabled = true;
+  if (ui.clearBtn) ui.clearBtn.disabled = true;
   // фокус лучше давать чуть позже
   setTimeout(() => ui.modalLabelInput.focus(), 0);
 }
 
 function closeModal(saveLabel) {
   ui.modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (ui.addBtn) ui.addBtn.disabled = false;
+  if (ui.clearBtn) ui.clearBtn.disabled = false;
   const pending = state.pendingLabelForExpr;
   state.pendingLabelForExpr = null;
   if (!pending) return;
@@ -629,6 +656,8 @@ function closeModal(saveLabel) {
   const label = saveLabel ? clampText(ui.modalLabelInput.value, 140) : "";
   addEntry(pending.expr, pending.value, label);
   setExpr("");
+  // после добавления из модалки — уходим в ленту
+  ui.applyMode?.("tape");
 }
 
 // ---------------------------
