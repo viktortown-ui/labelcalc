@@ -284,6 +284,9 @@ const ui = {
   saveBtn: null,
   copyBtn: null,
 
+  calcPanel: null,
+  calcToggle: null,
+
   modal: null,
   modalLabelInput: null,
   modalSaveBtn: null,
@@ -303,10 +306,17 @@ const ui = {
     this.saveBtn = document.getElementById("saveBtn");
     this.copyBtn = document.getElementById("copyBtn");
 
+    this.calcPanel = document.getElementById("calcPanel");
+    this.calcToggle = document.getElementById("calcToggle");
+
     this.modal = document.getElementById("labelModal");
     this.modalLabelInput = document.getElementById("modalLabelInput");
     this.modalSaveBtn = document.getElementById("modalSaveBtn");
     this.modalSkipBtn = document.getElementById("modalSkipBtn");
+
+    // collapsible bottom calculator panel
+    this.initCollapse();
+    this.initAutoCollapse();
 
     // keypad
     this.keypad.addEventListener("click", (e) => {
@@ -339,6 +349,85 @@ const ui = {
     });
 
     this.render();
+  },
+
+  initCollapse() {
+    const panel = this.calcPanel;
+    const btn = this.calcToggle;
+    if (!panel || !btn) return;
+
+    const key = "labelcalc_calc_collapsed";
+    const startCollapsed = localStorage.getItem(key) === "1";
+
+    const apply = (collapsed) => {
+      panel.classList.toggle("is-collapsed", collapsed);
+      document.body.classList.toggle("calc-collapsed", collapsed);
+      btn.textContent = collapsed ? "Развернуть" : "Свернуть";
+      btn.setAttribute("aria-expanded", String(!collapsed));
+      localStorage.setItem(key, collapsed ? "1" : "0");
+    };
+
+    apply(startCollapsed);
+
+    btn.addEventListener("click", () => {
+      const collapsed = panel.classList.contains("is-collapsed");
+      apply(!collapsed);
+    });
+  },
+
+  initAutoCollapse() {
+    const panel = this.calcPanel;
+    if (!panel) return;
+
+    // Автосворачивание: когда пользователь скроллит ленту вниз.
+    // Авторазворачивание: любой тап по панели/клавиатуре/дисплею.
+    const main = document.querySelector(".app__main");
+    if (!main) return;
+
+    let lastY = main.scrollTop;
+    let lastT = 0;
+
+    const collapse = () => {
+      if (!panel.classList.contains("is-collapsed")) {
+        panel.classList.add("is-collapsed");
+        document.body.classList.add("calc-collapsed");
+        if (this.calcToggle) {
+          this.calcToggle.textContent = "Развернуть";
+          this.calcToggle.setAttribute("aria-expanded", "false");
+        }
+        try { localStorage.setItem("labelcalc_calc_collapsed", "1"); } catch {}
+      }
+    };
+
+    const expand = () => {
+      if (panel.classList.contains("is-collapsed")) {
+        panel.classList.remove("is-collapsed");
+        document.body.classList.remove("calc-collapsed");
+        if (this.calcToggle) {
+          this.calcToggle.textContent = "Свернуть";
+          this.calcToggle.setAttribute("aria-expanded", "true");
+        }
+        try { localStorage.setItem("labelcalc_calc_collapsed", "0"); } catch {}
+      }
+    };
+
+    // expand on any interaction with the panel
+    panel.addEventListener("pointerdown", () => expand(), { passive: true });
+
+    // collapse on scroll down (throttled)
+    main.addEventListener(
+      "scroll",
+      () => {
+        const now = Date.now();
+        if (now - lastT < 120) return;
+        lastT = now;
+        const y = main.scrollTop;
+        const dy = y - lastY;
+        lastY = y;
+        if (dy > 18) collapse();
+      },
+      { passive: true }
+    );
   },
 
   render() {

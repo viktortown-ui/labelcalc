@@ -47,6 +47,7 @@ body {
 body {
   display: flex;
   justify-content: center;
+  align-items: stretch;
   padding: calc(16px + var(--safe-top)) 16px calc(16px + var(--safe-bottom));
   touch-action: manipulation;
 }
@@ -56,6 +57,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  height: 100%;
 }
 
 .app__header {
@@ -105,6 +107,8 @@ body {
 
 .app__main {
   flex: 1;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tape {
@@ -192,6 +196,60 @@ body {
   box-shadow: var(--shadow);
   display: grid;
   gap: 12px;
+}
+
+/* --- Bottom calculator panel (fixed + collapsible) --- */
+:root{
+  /* примерная высота панели (для отступа ленты). можно подстроить */
+  --calc-panel-h: 360px;
+  --calc-panel-h-collapsed: 56px;
+}
+
+.input-panel__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom: 4px;
+}
+
+.input-panel__title{
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.input-panel__toggle{
+  min-height: 44px;
+}
+
+/* Делаем панель "калькулятором" как в телефоне */
+#calcPanel{
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: min(520px, 100%);
+  z-index: 50;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  padding-bottom: calc(16px + var(--safe-bottom));
+  max-height: calc(var(--calc-panel-h) + var(--safe-bottom));
+  overflow: auto;
+}
+
+/* Чтобы лента не перекрывалась панелью */
+.app__main{
+  padding-bottom: calc(var(--calc-panel-h) + 24px + var(--safe-bottom));
+}
+
+/* Свернутый режим */
+#calcPanel.is-collapsed{
+  max-height: calc(var(--calc-panel-h-collapsed) + var(--safe-bottom));
+  overflow: hidden;
+}
+
+body.calc-collapsed .app__main{
+  padding-bottom: calc(var(--calc-panel-h-collapsed) + 24px + var(--safe-bottom));
 }
 
 .display {
@@ -367,9 +425,4 @@ body {
   }
 }
 
-@media (max-width: 600px) {
-  .input-panel {
-    position: sticky;
-    bottom: calc(12px + var(--safe-bottom));
-  }
-}
+/* панель фиксирована всегда (как калькулятор), sticky не используем */
