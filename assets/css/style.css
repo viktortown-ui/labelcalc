@@ -52,6 +52,12 @@ body {
   touch-action: manipulation;
 }
 
+/* Используем динамическую высоту экрана на мобилках (чтобы кнопки влезали)
+   и не было "плавающего" 100vh из-за адресной строки браузера. */
+.app {
+  min-height: 100dvh;
+}
+
 .app {
   width: min(520px, 100%);
   display: flex;
@@ -59,6 +65,20 @@ body {
   gap: 16px;
   height: 100%;
 }
+
+/* Режимы экрана: чтобы клавиатура была целиком, а скроллилась только лента */
+body.view-calc .app__main { display: none; }
+body.view-calc .app { gap: 12px; }
+
+/* В режиме калькулятора делаем шапку компактнее (чтобы не съедала высоту) */
+body.view-calc .app__title,
+body.view-calc .app__actions { display: none; }
+body.view-calc .app__header { padding: 12px; gap: 10px; }
+body.view-calc .app__total-value { font-size: 1.6rem; }
+
+/* В режиме ленты калькулятор сворачивается в полоску, лента на весь экран */
+body.view-tape #calcPanel { max-height: calc(var(--calc-panel-h-collapsed) + var(--safe-bottom)); overflow: hidden; }
+body.view-tape .app__main { padding-bottom: calc(var(--calc-panel-h-collapsed) + 24px + var(--safe-bottom)); }
 
 .app__header {
   background: var(--surface);
@@ -194,7 +214,9 @@ body {
   border-radius: var(--radius);
   padding: 16px;
   box-shadow: var(--shadow);
-  display: grid;
+  /* flex-колонка чтобы можно было ужать клавиатуру по высоте */
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
@@ -211,6 +233,12 @@ body {
   justify-content:space-between;
   gap:12px;
   margin-bottom: 4px;
+}
+
+.input-panel__header-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
 }
 
 .input-panel__title{
@@ -233,8 +261,9 @@ body {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   padding-bottom: calc(16px + var(--safe-bottom));
-  max-height: calc(var(--calc-panel-h) + var(--safe-bottom));
-  overflow: auto;
+  /* В обычном режиме клавиатура должна влезать без внутреннего скролла */
+  max-height: calc(100dvh - 8px);
+  overflow: hidden;
 }
 
 /* Чтобы лента не перекрывалась панелью */
@@ -283,6 +312,14 @@ body.calc-collapsed .app__main{
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
+  /* чтобы кнопки ужимались по высоте и всегда помещались */
+  grid-auto-rows: 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.input-panel__actions {
+  margin-top: 2px;
 }
 
 .key {
@@ -295,6 +332,28 @@ body.calc-collapsed .app__main{
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.08s ease;
+}
+
+/* На маленьких экранах убираем инлайн-поле подписи (оно съедает высоту).
+   Подпись остаётся доступна через модалку/или можно оставить поле скрытым. */
+@media (max-width: 480px) {
+  .input-panel__row { display: none; }
+  .key { min-height: 48px; border-radius: 14px; }
+  .display__value { font-size: 1.35rem; }
+  .input-panel__actions .btn { min-height: 46px; }
+  /* На очень маленьких экранах подпись лучше вводить в модалке,
+     а не занимать место клавиатуры. Сам input оставляем в DOM (для логики),
+     просто прячем визуально. */
+  .input-panel__row { display: none; }
+
+  /* Чуть компактнее дисплей */
+  .display__value { font-size: 1.35rem; }
+
+  /* Чуть меньше кнопки, чтобы влезли без скролла */
+  .key { min-height: 52px; border-radius: 14px; }
+
+  /* Если кнопки всё равно не влезают — уменьшай gap, а не делай скролл */
+  .keypad { gap: 8px; }
 }
 
 .key:active {

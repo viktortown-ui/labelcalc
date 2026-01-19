@@ -39,9 +39,12 @@
       <section class="input-panel" id="calcPanel" aria-label="Ввод строки">
         <div class="input-panel__header">
           <div class="input-panel__title">Калькулятор</div>
-          <button class="btn btn--ghost input-panel__toggle" type="button" id="calcToggle" aria-expanded="true">
-            Свернуть
-          </button>
+          <div class="input-panel__header-actions">
+            <button class="btn btn--ghost" type="button" id="viewToggle" aria-pressed="false">Лента</button>
+            <button class="btn btn--ghost input-panel__toggle" type="button" id="calcToggle" aria-expanded="true">
+              Свернуть
+            </button>
+          </div>
         </div>
 
         <div class="display" aria-label="Текущее выражение">

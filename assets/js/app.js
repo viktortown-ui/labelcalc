@@ -286,6 +286,7 @@ const ui = {
 
   calcPanel: null,
   calcToggle: null,
+  viewToggle: null,
 
   modal: null,
   modalLabelInput: null,
@@ -308,13 +309,15 @@ const ui = {
 
     this.calcPanel = document.getElementById("calcPanel");
     this.calcToggle = document.getElementById("calcToggle");
+    this.viewToggle = document.getElementById("viewToggle");
 
     this.modal = document.getElementById("labelModal");
     this.modalLabelInput = document.getElementById("modalLabelInput");
     this.modalSaveBtn = document.getElementById("modalSaveBtn");
     this.modalSkipBtn = document.getElementById("modalSkipBtn");
 
-    // collapsible bottom calculator panel
+    // режимы экрана + панель калькулятора
+    this.initViewMode();
     this.initCollapse();
     this.initAutoCollapse();
 
@@ -351,6 +354,59 @@ const ui = {
     this.render();
   },
 
+  initViewMode() {
+    // Два режима:
+    // - view-calc: клавиатура на первом месте (лента скрыта, шапка компактная)
+    // - view-tape: лента на весь экран, калькулятор свёрнут полоской
+    const btn = this.viewToggle;
+    const key = "labelcalc_view";
+
+    const preferCalcByDefault = window.matchMedia && window.matchMedia("(max-width: 480px)").matches;
+    const saved = (() => {
+      try { return localStorage.getItem(key); } catch { return null; }
+    })();
+    const start = saved || (preferCalcByDefault ? "calc" : "tape");
+
+    const apply = (mode) => {
+      const isCalc = mode === "calc";
+      document.body.classList.toggle("view-calc", isCalc);
+      document.body.classList.toggle("view-tape", !isCalc);
+
+      // В режиме ленты автоматически сворачиваем калькулятор
+      if (this.calcPanel) {
+        this.calcPanel.classList.toggle("is-collapsed", !isCalc);
+      }
+      document.body.classList.toggle("calc-collapsed", !isCalc);
+
+      if (this.calcToggle) {
+        this.calcToggle.textContent = !isCalc ? "Развернуть" : "Свернуть";
+        this.calcToggle.setAttribute("aria-expanded", String(isCalc));
+      }
+
+      if (btn) {
+        btn.textContent = isCalc ? "Лента" : "Калькулятор";
+        btn.setAttribute("aria-pressed", String(!isCalc));
+      }
+
+      try { localStorage.setItem(key, isCalc ? "calc" : "tape"); } catch {}
+      // синхронизируем и ключ сворачивания для совместимости со старым состоянием
+      try { localStorage.setItem("labelcalc_calc_collapsed", isCalc ? "0" : "1"); } catch {}
+
+      // Если пользователь переключился в режим ленты — включаем автосворачивание.
+      // (В режиме калькулятора оно не нужно.)
+      this.initAutoCollapse();
+    };
+
+    apply(start);
+
+    if (btn) {
+      btn.addEventListener("click", () => {
+        const isCalcNow = document.body.classList.contains("view-calc");
+        apply(isCalcNow ? "tape" : "calc");
+      });
+    }
+  },
+
   initCollapse() {
     const panel = this.calcPanel;
     const btn = this.calcToggle;
@@ -378,6 +434,14 @@ const ui = {
   initAutoCollapse() {
     const panel = this.calcPanel;
     if (!panel) return;
+
+    if (this._autoCollapseBound) return;
+
+    // Автосворачивание нужно только в режиме ленты.
+    if (document.body.classList.contains("view-calc")) return;
+
+    // Автосворачивание нужно только в режиме ленты.
+    if (!document.body.classList.contains("view-tape")) return;
 
     // Автосворачивание: когда пользователь скроллит ленту вниз.
     // Авторазворачивание: любой тап по панели/клавиатуре/дисплею.
@@ -428,6 +492,8 @@ const ui = {
       },
       { passive: true }
     );
+
+    this._autoCollapseBound = true;
   },
 
   render() {
