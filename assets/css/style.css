@@ -48,6 +48,7 @@ body {
   display: flex;
   justify-content: center;
   padding: calc(16px + var(--safe-top)) 16px calc(16px + var(--safe-bottom));
+  touch-action: manipulation;
 }
 
 .app {
@@ -127,6 +128,63 @@ body {
   gap: 12px;
 }
 
+.tape-item {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.tape-item__main {
+  display: grid;
+  gap: 4px;
+}
+
+.tape-item__value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.tape-item__expr {
+  color: var(--muted);
+  font-size: 0.85rem;
+  word-break: break-word;
+}
+
+.tape-item__label {
+  color: var(--text);
+  font-size: 0.95rem;
+  word-break: break-word;
+}
+
+.tape-item__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 12px;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-btn--danger {
+  border-color: rgba(255, 107, 107, 0.4);
+  color: var(--danger);
+}
+
 .input-panel {
   background: var(--surface);
   border-radius: var(--radius);
@@ -134,6 +192,67 @@ body {
   box-shadow: var(--shadow);
   display: grid;
   gap: 12px;
+}
+
+.display {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+}
+
+.display__label {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.display__value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.1;
+  word-break: break-word;
+}
+
+.display__hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  min-height: 1.1em;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.key {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 16px;
+  min-height: 56px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+
+.key:active {
+  transform: scale(0.98);
+}
+
+.key--op {
+  background: rgba(91, 141, 255, 0.12);
+  border-color: rgba(91, 141, 255, 0.35);
+}
+
+.key--eq {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border: none;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(45, 107, 255, 0.35);
 }
 
 .input-panel__row {
@@ -241,5 +360,16 @@ body {
 @media (max-width: 480px) {
   .app__actions {
     grid-template-columns: 1fr;
+  }
+
+  body {
+    padding: calc(12px + var(--safe-top)) 12px calc(12px + var(--safe-bottom));
+  }
+}
+
+@media (max-width: 600px) {
+  .input-panel {
+    position: sticky;
+    bottom: calc(12px + var(--safe-bottom));
   }
 }

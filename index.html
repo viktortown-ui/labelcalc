@@ -37,30 +37,53 @@
       </main>
 
       <section class="input-panel" aria-label="Ввод строки">
-        <div class="input-panel__row">
-          <label class="input-panel__label" for="valueInput">Число</label>
-          <input
-            id="valueInput"
-            class="input-panel__input"
-            type="number"
-            inputmode="decimal"
-            placeholder="0"
-            autocomplete="off"
-          />
+        <div class="display" aria-label="Текущее выражение">
+          <div class="display__label">Выражение</div>
+          <div class="display__value" id="exprDisplay">0</div>
+          <div class="display__hint" id="exprHint"></div>
         </div>
+
         <div class="input-panel__row">
           <label class="input-panel__label" for="labelInput">Подпись</label>
           <input
             id="labelInput"
             class="input-panel__input"
             type="text"
-            placeholder="Опциональная подпись"
+            placeholder="Опциональная подпись (например: цемент М500)"
             autocomplete="off"
           />
         </div>
+
+        <div class="keypad" aria-label="Клавиатура калькулятора">
+          <button class="key" type="button" data-key="C">C</button>
+          <button class="key" type="button" data-key="BK">⌫</button>
+          <button class="key" type="button" data-key="(">(</button>
+          <button class="key key--op" type="button" data-key=")">)</button>
+
+          <button class="key" type="button" data-key="7">7</button>
+          <button class="key" type="button" data-key="8">8</button>
+          <button class="key" type="button" data-key="9">9</button>
+          <button class="key key--op" type="button" data-key="/">÷</button>
+
+          <button class="key" type="button" data-key="4">4</button>
+          <button class="key" type="button" data-key="5">5</button>
+          <button class="key" type="button" data-key="6">6</button>
+          <button class="key key--op" type="button" data-key="*">×</button>
+
+          <button class="key" type="button" data-key="1">1</button>
+          <button class="key" type="button" data-key="2">2</button>
+          <button class="key" type="button" data-key="3">3</button>
+          <button class="key key--op" type="button" data-key="-">−</button>
+
+          <button class="key" type="button" data-key="0">0</button>
+          <button class="key" type="button" data-key=",">,</button>
+          <button class="key key--op" type="button" data-key="+">+</button>
+          <button class="key key--eq" type="button" data-key="=">=</button>
+        </div>
+
         <div class="input-panel__actions">
-          <button class="btn btn--primary" type="button" id="addBtn">Добавить</button>
-          <button class="btn btn--ghost" type="button" id="clearBtn">Очистить</button>
+          <button class="btn btn--primary" type="button" id="addBtn">Добавить в ленту</button>
+          <button class="btn btn--ghost" type="button" id="clearBtn">Сброс</button>
         </div>
       </section>
     </div>
@@ -69,11 +92,11 @@
       <div class="modal__backdrop" data-close="modal"></div>
       <div class="modal__content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <h2 id="modalTitle">Подпись</h2>
-        <p>Добавьте подпись для строки</p>
-        <input class="modal__input" type="text" placeholder="Например: доставка" />
+        <p>Добавьте подпись для строки (можно пропустить)</p>
+        <input class="modal__input" id="modalLabelInput" type="text" placeholder="Например: доставка" />
         <div class="modal__actions">
-          <button class="btn btn--primary" type="button">Сохранить</button>
-          <button class="btn btn--ghost" type="button" data-close="modal">Отмена</button>
+          <button class="btn btn--primary" type="button" id="modalSaveBtn">Сохранить</button>
+          <button class="btn btn--ghost" type="button" id="modalSkipBtn" data-close="modal">Пропустить</button>
         </div>
       </div>
     </div>
