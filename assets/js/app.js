@@ -14,6 +14,10 @@ const state = {
   pendingLabelForExpr: null, // {expr,value} когда открыта модалка
 };
 
+// Когда мы обновляем value у input, браузер часто сбрасывает каретку.
+// Храним желаемую позицию курсора и восстанавливаем её в ui.render().
+let desiredCaretPos = null;
+
 // ---------------------------
 // Utils
 // ---------------------------
@@ -388,7 +392,16 @@ const ui = {
     this.totalValue.textContent = formatNumber(state.total);
 
     const exprText = state.expr ? state.expr : "0";
-    this.exprDisplay.textContent = exprText;
+    // exprDisplay now is <input>, not a div
+    if (this.exprDisplay) {
+      this.exprDisplay.value = exprText;
+      // восстановим курсор, если был запрос
+      if (Number.isFinite(desiredCaretPos) && document.activeElement === this.exprDisplay) {
+        const p = Math.max(0, Math.min(desiredCaretPos, this.exprDisplay.value.length));
+        try { this.exprDisplay.setSelectionRange(p, p); } catch {}
+      }
+    }
+    desiredCaretPos = null;
 
     // hint: попробуем посчитать на лету
     if (!state.expr) {
@@ -479,24 +492,57 @@ function setExpr(next) {
   ui.render();
 }
 
+function setExprWithCaret(next, caretPos) {
+  state.expr = next;
+  desiredCaretPos = Number.isFinite(caretPos) ? caretPos : null;
+  saveState();
+  ui.render();
+}
+function focusExpr() {
+  // readonly input не вызывает системную клавиатуру, но позволяет курсор/выделение
+  ui.exprDisplay?.focus?.({ preventScroll: true });
+}
+
+function getSelection() {
+  if (!ui.exprDisplay) return { start: state.expr.length, end: state.expr.length };
+  const el = ui.exprDisplay;
+  const s = typeof el.selectionStart === "number" ? el.selectionStart : state.expr.length;
+  const e = typeof el.selectionEnd === "number" ? el.selectionEnd : state.expr.length;
+  return { start: Math.max(0, Math.min(s, state.expr.length)), end: Math.max(0, Math.min(e, state.expr.length)) };
+}
+
 function onKey(key) {
   // ограничим максимальную длину, чтобы не убивать UI
   const MAX_LEN = 80;
+  // держим фокус на поле выражения (курсор виден, но клавиатура не всплывает)
+  focusExpr();
   const expr = state.expr;
+  const sel = getSelection();
+  const hasSel = sel.end > sel.start;
+  const caret = sel.start;
 
   if (key === "C") {
-    setExpr("");
+    setExprWithCaret("", 0);
     return;
   }
   if (key === "BK") {
-    setExpr(expr.slice(0, -1));
+    if (!expr) return;
+    if (hasSel) {
+      const next = expr.slice(0, sel.start) + expr.slice(sel.end);
+      setExprWithCaret(next, sel.start);
+      return;
+    }
+    if (caret <= 0) return;
+    const next = expr.slice(0, caret - 1) + expr.slice(caret);
+    setExprWithCaret(next, caret - 1);
     return;
   }
   if (key === "=") {
     try {
       const value = evaluate(expr);
       // как обычный калькулятор: результат становится текущим выражением
-      setExpr(formatNumber(value));
+      const res = formatNumber(value);
+      setExprWithCaret(res, res.length);
     } catch {
       flashHint("Ошибка выражения");
     }
@@ -507,38 +553,45 @@ function onKey(key) {
   let add = key;
   if (key === ",") add = ",";
 
+  // Вставка происходит в позицию курсора (или заменяет выделение)
+  const before = expr.slice(0, sel.start);
+  const after = expr.slice(sel.end);
+
   // запрет двойной запятой в одном числе: грубо, но работает
   if (add === ",") {
-    // ищем последнее "число" после последнего оператора/скобки
-    const tail = expr.split(/[+\-*/()]/).pop() || "";
-    if (tail.includes(",")) {
-      return;
-    }
-    if (tail === "") {
-      // начинаем число как 0,
-      add = "0,";
-    }
+    // запрет второй запятой в текущем числе вокруг курсора
+    const leftOp = Math.max(before.lastIndexOf("+"), before.lastIndexOf("-"), before.lastIndexOf("*"), before.lastIndexOf("/"), before.lastIndexOf("("), before.lastIndexOf(")"));
+    const rightCandidates = [after.indexOf("+"), after.indexOf("-"), after.indexOf("*"), after.indexOf("/"), after.indexOf("("), after.indexOf(")")].filter((i) => i >= 0);
+    const rightOp = rightCandidates.length ? Math.min(...rightCandidates) : after.length;
+    const numberToken = expr.slice(leftOp + 1, sel.end + rightOp);
+    if (numberToken.includes(",")) return;
+    // если вставляем запятую в пустое место — начинаем число как 0,
+    const around = expr.slice(leftOp + 1, sel.end + rightOp).trim();
+    if (!around) add = "0,";
   }
 
   // операторы: не даём два подряд (кроме '-' как унарного — но это обработает парсер)
   if (isOperator(add)) {
-    if (!expr) {
+    if (!expr && !hasSel) {
       // начинать можно только с '-' (унарный минус)
       if (add !== "-") return;
     } else {
-      const last = expr.slice(-1);
-      if (isOperator(last) && add !== "-") {
-        // заменить оператор
-        setExpr(expr.slice(0, -1) + add);
+      // если перед курсором уже оператор — заменим его (кроме '-')
+      const prev = before.slice(-1);
+      if (!hasSel && isOperator(prev) && add !== "-") {
+        const next = before.slice(0, -1) + add + after;
+        setExprWithCaret(next, before.length);
         return;
       }
     }
   }
 
   // длина
-  if ((expr + add).length > MAX_LEN) return;
+  if ((before + add + after).length > MAX_LEN) return;
 
-  setExpr(expr + add);
+  const next = before + add + after;
+  const nextCaret = before.length + add.length;
+  setExprWithCaret(next, nextCaret);
 }
 
 function onReset() {

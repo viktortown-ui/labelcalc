@@ -37,7 +37,23 @@
         <div class="display" aria-label="Текущее выражение">
           <button class="icon-btn display__close" type="button" id="closeCalcBtn" title="Скрыть калькулятор (в ленту)">✕</button>
           <div class="display__label">Выражение</div>
-          <div class="display__value" id="exprDisplay">0</div>
+          <!--
+            Важно: поле readonly, чтобы не всплывала системная клавиатура.
+            При этом можно ставить курсор пальцем и вставлять/удалять символы
+            через экранную клавиатуру калькулятора.
+          -->
+          <input
+            class="display__value display__value--input"
+            id="exprDisplay"
+            type="text"
+            inputmode="none"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            readonly
+            value="0"
+            aria-label="Поле выражения"
+          />
           <div class="display__hint" id="exprHint"></div>
         </div>
 
